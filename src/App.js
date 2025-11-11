@@ -1,23 +1,31 @@
-import logo from './logo.svg';
 import './App.css';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className="sidebar">
+        <div className="uperSide">
+          <div className="uperSideTop">
+            <img src="" alt="" className="logo" />
+            <span className="brand">ChatGPT</span>
+            <button className="midBtn">
+              <img src="" alt="" className="addBtn" /> New Chat
+            </button>
+            <div className="upperSideBottom">
+              <button className="query">
+                <img src="" alt="" /> What is Programming?
+              </button>
+              <button className="query">
+                <img src="" alt="" /> What is API?
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="lowerSide"></div>
+      </div>
+
+      <div className="main"></div>
     </div>
   );
 }
