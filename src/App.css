@@ -55,5 +55,18 @@ body{
     display: flex;
     align-items: center;
     justify-content: center;
+    margin: 0 auto;
+    margin-bottom: 3rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
 }
 
+.query{
+    display: flex;
+    align-items: center;
+    background: transparent;
+    padding: 1.5rem;
+    width: 25rem;
+    margin: 1rem auto;
+    border-radius: 0.5rem;
+}
