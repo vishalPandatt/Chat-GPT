@@ -31,7 +31,7 @@ function App() {
           </button>
           <div className="logo-section">
             <img src={gptLogo} alt="Logo" className="logo" />
-            <span className="brand">Gemini</span>
+            <span className="brand">Visha AI</span>
           </div>
         </div>
 
