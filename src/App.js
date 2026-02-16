@@ -46,11 +46,6 @@ function App() {
     }
   }
 
-  function handleNewChat() {
-    setMessages([]);
-    setPrompt('');
-  }
-
   return (
     <div className="app">
       <div className="sidebar">
