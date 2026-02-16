@@ -19,6 +19,107 @@ body {
     display: flex;
 }
 
+/* Main chat area */
+.main{
+    flex: 9;
+    background: linear-gradient(180deg, rgba(6,6,20,1) 0%, rgba(10,10,30,1) 100%);
+    color: #e6eef8;
+    display: flex;
+    align-items: stretch;
+}
+
+.main > div{
+    width: 100%;
+}
+
+.messageContainer{
+    max-width: 900px;
+    margin: 3rem auto;
+    background: rgba(255,255,255,0.03);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 6px 30px rgba(0,0,0,0.6);
+}
+
+.messageRow{
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.messageBubble{
+    max-width: 75%;
+    padding: 1rem 1.2rem;
+    border-radius: 12px;
+    font-size: 1.4rem;
+    line-height: 1.4;
+    white-space: pre-wrap;
+}
+
+.message.user .messageBubble{
+    margin-left: auto;
+    background: linear-gradient(90deg,#6b5bff,#9a8bff);
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.message.assistant .messageBubble{
+    margin-right: auto;
+    background: rgba(255,255,255,0.04);
+    color: #d9e6ff;
+    border-bottom-left-radius: 4px;
+}
+
+.inputContainer{
+    position: sticky;
+    bottom: 1rem;
+    background: transparent;
+    padding: 1rem 0;
+}
+
+.inputField, textarea{
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.06);
+    background: rgba(0,0,0,0.35);
+    color: #e6eef8;
+    padding: 1rem;
+    font-size: 1.4rem;
+    outline: none;
+}
+
+.sendBtn, .midBtn{
+    background: linear-gradient(90deg,#5a4bff,#7a6bff);
+    border: none;
+    color: white;
+    padding: 1rem 1.4rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1.4rem;
+}
+
+.midBtn{
+    width: 100%;
+    max-width: 14rem;
+}
+
+/* Sidebar tweaks */
+.uperSideTop .brand{
+    font-size: 2.2rem;
+    margin-left: 0.8rem;
+}
+
+.logo{height: 3.4rem;}
+
+.listItems{padding: 1rem 2rem; color: #d6d9e6;}
+
+@media (max-width: 900px){
+    .app{flex-direction:column}
+    .sidebar{order:2}
+    .main{order:1}
+    .messageContainer{margin:1rem}
+}
+
 /* SIDEBAR STYLES */
 .sidebar {
     width: 260px;

@@ -5,86 +5,106 @@ import msgIcon from './Assets/message.svg';
 import home  from './Assets/home.svg';
 import shaved  from './Assets/bookmark.svg';
 import rocket from './Assets/rocket.svg';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 function App() {
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState('');
+  const [prompt, setPrompt] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [messages, setMessages] = useState([]); // {role: 'user'|'assistant', text}
 
-  const handleSend = () => {
-    if (input.trim()) {
-      setMessages([...messages, { type: 'user', text: input }]);
-      setInput('');
-      
-      setTimeout(() => {
-        setMessages(prev => [...prev, { type: 'assistant', text: 'This is a sample response from Gemini AI.' }]);
-      }, 500);
+  async function sendPrompt() {
+    if (!prompt.trim()) return;
+    const userMsg = prompt.trim();
+    setMessages((m) => [...m, { role: 'user', text: userMsg }]);
+    setPrompt('');
+    setLoading(true);
+    try {
+      // prefer explicit server URL if provided, otherwise use relative path (proxy)
+      const serverBase = process.env.REACT_APP_API_URL || 'http://localhost:5173';
+      const res = await fetch(serverBase + '/api/openai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: userMsg }),
+      });
+      // attempt to parse JSON, but fall back to text for useful errors
+      let data;
+      const contentType = res.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        throw new Error(text || `Unexpected content-type: ${contentType}`);
+      }
+
+      const answer = (data?.choices && data.choices[0] && data.choices[0].text) || data?.error || 'No response';
+      setMessages((m) => [...m, { role: 'assistant', text: String(answer).trim() }]);
+    } catch (err) {
+      const msg = err?.message || String(err);
+      setMessages((m) => [...m, { role: 'assistant', text: 'Error: ' + msg }]);
+    } finally {
+      setLoading(false);
     }
-  };
+  }
+
+  function handleNewChat() {
+    setMessages([]);
+    setPrompt('');
+  }
 
   return (
     <div className="app">
       <div className="sidebar">
-        <div className="sidebarTop">
-          <button className="newChatBtn">
-            <span>+</span>
-          </button>
-          <div className="logo-section">
-            <img src={gptLogo} alt="Logo" className="logo" />
-            <span className="brand">Visha AI</span>
+        <div className="uperSide">
+          <div className="uperSideTop">
+            <div style={{display: 'flex', alignItems: 'center'}}>
+              <img src={gptLogo} alt="Logo" className="logo" />
+              <span className="brand">ChatGPT</span>
+            </div>
+            <button className="midBtn" onClick={() => { setMessages([]); setPrompt(''); }}>
+              <img src={addBtn} alt="new chat" className="addBtn" /> New Chat
+            </button>
+            <div className="upperSideBottom">
+              <button className="query" onClick={() => { setPrompt('What is Programming?'); }}>
+                <img src={msgIcon} alt="Query" /> What is Programming?
+              </button>
+              <button className="query" onClick={() => { setPrompt('How to use an API?'); }}>
+                <img src={msgIcon} alt="Query" /> How to use an API?
+              </button>
+            </div>
           </div>
         </div>
 
-        <div className="chatHistory">
-          <div className='historyTitle'>Chat History</div>
-          <button className="query">
-            <img src={msgIcon} alt="Query" /> What is Programming?
-          </button>
-          <button className="query">
-            <img src={msgIcon} alt="Query" /> How to use an API?
-          </button>
-        </div>
-
-        <div className="sidebarBottom">
+        <div className="lowerSide">
           <div className='listItems'><img src={home} alt='home' className='listItemsImg'></img>Home</div>
-          <div className='listItems'><img src={shaved} alt='bookmark' className='listItemsImg'></img>Saved</div>
-          <div className='listItems'><img src={rocket} alt='rocket' className='listItemsImg'></img>Upgrade</div>
+          <div className='listItems'><img src={shaved} alt='bookmark' className='listItemsImg'></img>Shaved</div>
+          <div className='listItems'><img src={rocket} alt='rocket' className='listItemsImg'></img>Upgrade to Pro</div>
         </div>
       </div>
 
       <div className="main">
-        <div className="messageContainer">
-          {messages.length === 0 ? (
-            <div className="emptyState">
-              <h1>Hi there</h1>
-              <p>How can I help you today?</p>
-            </div>
-          ) : (
-            <div className="messages">
-              {messages.map((msg, idx) => (
-                <div key={idx} className={`message ${msg.type}`}>
-                  <div className={`messageBubble ${msg.type}`}>
-                    {msg.text}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <div style={{padding: '2rem'}}>
+          <div style={{marginBottom: '1rem'}}>
+            <textarea value={prompt} onChange={(e)=>setPrompt(e.target.value)} placeholder="Type your question..." style={{width: '100%', height: '6rem', fontSize: '1.4rem', padding: '1rem'}} />
+          </div>
+          <div style={{display: 'flex', gap: '1rem'}}>
+            <button className="midBtn" style={{maxWidth: '12rem'}} onClick={sendPrompt} disabled={loading}>{loading ? 'Thinking...' : 'Send'}</button>
+          </div>
 
-        <div className="inputContainer">
-          <div className="searchBox">
-            <input
-              type="text"
-              className="inputField"
-              placeholder="Ask anything..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-            />
-            <button className="sendBtn" onClick={handleSend}>
-              Send
-            </button>
+          <div className="messageContainer">
+            {messages.length === 0 ? (
+              <div className="emptyState">
+                <h2 style={{margin:0}}>Start a conversation</h2>
+                <p style={{marginTop: '0.5rem', color: 'rgba(255,255,255,0.6)'}}>Type a question and press Send.</p>
+              </div>
+            ) : (
+              <div className="messages">
+                {messages.map((m, i) => (
+                  <div key={i} className={`message ${m.role}`}>
+                    <div className="messageBubble">{m.text}</div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -93,3 +113,4 @@ function App() {
 }
 
 export default App;
+
